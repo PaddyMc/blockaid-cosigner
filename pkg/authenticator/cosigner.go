@@ -13,9 +13,9 @@ import (
 	txtypes "github.com/cosmos/cosmos-sdk/types/tx"
 
 	auth "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/osmosis-labs/osmosis/v23/app/params"
-	"github.com/osmosis-labs/osmosis/v23/x/authenticator/authenticator"
-	authenticatortypes "github.com/osmosis-labs/osmosis/v23/x/authenticator/types"
+	"github.com/osmosis-labs/osmosis/v24/app/params"
+	"github.com/osmosis-labs/osmosis/v24/x/smart-account/authenticator"
+	authenticatortypes "github.com/osmosis-labs/osmosis/v24/x/smart-account/types"
 
 	chaingrpc "github.com/PaddyMc/blockaid-cosigner/pkg/grpc"
 )
@@ -53,24 +53,24 @@ func CreateCosignerAccount(
 	// This is where we add the blockaid public key!
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	initDataPrivKey0 := authenticator.SubAuthenticatorInitData{
-		AuthenticatorType: "SignatureVerificationAuthenticator",
-		Data:              priv1.PubKey().Bytes(),
+		Type:   "SignatureVerification",
+		Config: priv1.PubKey().Bytes(),
 	}
 
 	initDataPrivKey1 := authenticator.SubAuthenticatorInitData{
-		AuthenticatorType: "SignatureVerificationAuthenticator",
-		Data:              priv2.PubKey().Bytes(),
+		Type:   "SignatureVerification",
+		Config: priv2.PubKey().Bytes(),
 	}
 
 	// Create the message filter AnyOf authenticator
 	initDataMessageFilter1 := authenticator.SubAuthenticatorInitData{
-		AuthenticatorType: "MessageFilterAuthenticator",
-		Data:              []byte(`{"@type":"/osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn"}`),
+		Type:   "MessageFilter",
+		Config: []byte(`{"@type":"/osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn"}`),
 	}
 
 	initDataMessageFilter2 := authenticator.SubAuthenticatorInitData{
-		AuthenticatorType: "MessageFilterAuthenticator",
-		Data:              []byte(`{"@type":"/cosmos.bqnk"}`),
+		Type:   "MessageFilter",
+		Config: []byte(`{"@type":"/cosmos.bqnk"}`),
 	}
 
 	// Compose the data for cosigner authenticator
@@ -87,16 +87,16 @@ func CreateCosignerAccount(
 
 	dataAnyOf, err := json.Marshal(compositeAuthDataAnyOf)
 	initDataAnyOf := authenticator.SubAuthenticatorInitData{
-		AuthenticatorType: "AnyOfAuthenticator",
-		Data:              dataAnyOf,
+		Type:   "AnyOf",
+		Config: dataAnyOf,
 	}
 
 	// This is the cosigner authenticator
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	dataAllOf, err := json.Marshal(compositeAuthDataAllOf)
 	initDataAllOf := authenticator.SubAuthenticatorInitData{
-		AuthenticatorType: "PartitionedAllOfAuthenticator",
-		Data:              dataAllOf,
+		Type:   "PartitionedAllOf",
+		Config: dataAllOf,
 	}
 
 	// Compose the AllOf and the AnyOf
@@ -109,7 +109,7 @@ func CreateCosignerAccount(
 	dataCompositeComplex, err := json.Marshal(compositeComplex)
 	addAllOfAuthenticatorMsg := &authenticatortypes.MsgAddAuthenticator{
 		Sender: accAddress.String(),
-		Type:   "AllOfAuthenticator",
+		Type:   "AllOf",
 		Data:   dataCompositeComplex,
 	}
 

@@ -7,8 +7,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/osmosis-labs/osmosis/v23/app"
-	"github.com/osmosis-labs/osmosis/v23/app/params"
+	"github.com/osmosis-labs/osmosis/v24/app"
+	"github.com/osmosis-labs/osmosis/v24/app/params"
 
 	grpc_chain "github.com/PaddyMc/blockaid-cosigner/pkg/grpc"
 	grpc "google.golang.org/grpc"
