@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -65,6 +66,18 @@ func SignAndBroadcastAuthenticatorMsgMultiSigners(
 		cosignerPrivKeys,
 		selectedAuthenticators,
 	)
+
+	log.Println("Simulate...")
+	respSim, err := txClient.Simulate(
+		context.Background(),
+		&txtypes.SimulateRequest{
+			TxBytes: txBytes,
+		},
+	)
+	fmt.Println(respSim)
+	if err != nil {
+		panic(err)
+	}
 
 	log.Println("Broadcasting...")
 	resp, err := txClient.BroadcastTx(
